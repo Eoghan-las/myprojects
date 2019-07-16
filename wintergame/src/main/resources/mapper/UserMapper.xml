@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.dao.UserDao">
+	<!-- 查询该时间范围内所有的用户信息 -->
+	<select id="findRageInputtime" resultType="User">
+		SELECT * FROM USER WHERE inputtime BETWEEN #{param1} AND #{param2}
+	</select>
+	<!-- 查询所有用户列表 -->
+	<select id="findAll" resultType="User">
+		select * from user
+	</select>
+	
+	<!-- 根据用户名查询用户对象 -->
+	<select id="findByName" resultType="User" >
+		select * from User where uname = #{uname}
+	</select>
+	
+	<!-- 根据用户id查询用户对象 -->
+	<select id="findById"  resultType="User">
+	  select * from User where uid = #{uid}
+	</select>
+	
+	<!-- 根据用户名密码查询用户对象 -->
+	<select id="findByNamePass" resultType="User">
+		select * from User where uname = #{uname} and upass = #{upass}
+	</select>
+	
+	<!-- 根据用户角色(客户，媒体，管理员)查询用户列表 -->
+	<select id="findByRole" resultType="User">
+	 select * from User where uloa = #{uloa}
+	</select>
+	
+	<!-- 添加用户 -->
+	<insert id="insert" parameterType="User">
+	insert into user(uname,upass,ubirthday,uemail,utel,uloa,ufriend,inputtime) values
+     (#{uname},#{upass},#{ubirthday},#{uemail},#{utel},#{uloa},#{ufriend},#{inputtime})
+	</insert>
+	
+	<!-- 删除用户 -->
+	<delete id="delete">
+		delete from User
+		<where>
+			uid in
+			<foreach collection="array" item="uid" open="(" separator="," close=")">
+				#{uid}
+			</foreach>
+		</where>
+	</delete>
+	
+	<!-- 修改（更新）用户 -->
+	<update id="update" parameterType="User">
+		update User 
+		<trim suffix=" " suffixOverrides=",">
+			<set>
+				<if test="uname!=null">
+					uname = #{uname},
+				</if>
+				<if test="upass!=null">
+					upass=#{upass},
+				</if>
+				<if test="ubirthday!=null">
+					ubirthday=#{ubirthday},
+				</if>
+				<if test="uemail!=null">
+					uemail=#{uemail},
+				</if>
+				<if test="utel!=null">
+					utel=#{utel},
+				</if>
+				<if test="uloa!=null">
+					uloa=#{uloa},
+				</if>
+				<if test="ufriend!=null">
+					ufriend=#{ufriend}
+				</if>
+			</set>
+		</trim>
+		<where>
+			uid = #{uid}
+		</where>
+	</update>
+	
+	
+</mapper>

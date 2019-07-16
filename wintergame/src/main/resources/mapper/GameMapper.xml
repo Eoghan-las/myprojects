@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.dao.GameDao">
+	<resultMap type="Game" id="rm1">
+		<result column="kid" property="kid"/>
+		<association property="gameKind" select="com.im.dao.GameKindDao.findById" column="kid"></association>
+	</resultMap>
+	<!-- 查询所有游戏列表 -->
+	<select id="findAll" resultType="Game" resultMap="rm1">
+		select * from game
+	</select>
+	<!-- 根据游戏类型查询游戏列表 -->
+	<select id="findByKid" resultType="Game" resultMap="rm1">
+		select * from game where kid = #{kid}
+	</select>
+	<!-- 根据游戏id查询游戏对象 -->
+	<select id="findById" resultType="Game" resultMap="rm1">
+		select * from game where gid = #{gid}
+	</select>
+	<!-- 上传新游戏 -->
+	<insert id="addGame" parameterType="Game">
+		insert into game(gname,kid,content,gamespace,saler,gprice,comming,commingtime) values(#{gname},#{kid},#{content},#{gamespace},#{saler},#{gprice},#{comming},#{commingtime})
+	</insert>
+	<!-- 删除游戏 -->
+	<delete id="delete">
+		delete from game
+		<where>
+			gid in
+			<foreach collection="array" item="gid" open="(" separator="," close=")">
+				#{gid}
+			</foreach>
+		</where>
+	</delete>
+	<!-- 修改游戏信息 -->
+	<update id="update">
+		update game
+		<trim suffix=" " suffixOverrides=",">
+			<set>
+				<if test="gname!=null">
+					gname = #{gname},
+				</if>
+				<if test="kid!=0">
+					kid = #{kid},
+				</if>
+				<if test="content!=null">
+					content = #{content},
+				</if>
+				<if test="gamespace!=null">
+					gamespace = #{gamespace},
+				</if>
+				<if test="saler!=null">
+					saler = #{saler},
+				</if>
+				<if test="gprice!=0">
+					gprice = #{gprice},
+				</if>
+				<if test="comming!=0">
+					comming = #{comming},
+				</if>
+				<if test="videos!=null">
+					videos = #{videos},
+				</if>
+				<if test="url!=null">
+					url = #{url}
+				</if>
+			</set>
+		</trim>
+		<where>
+			gid = #{gid}
+		</where>
+	</update>
+	<!-- 根据游戏id数组查询游戏列表 -->
+	<select id="finByIds" resultType="Game" resultMap="rm1">
+		select * from game
+		<where>
+			gid in 
+			<foreach collection="array" item="gid" open="(" separator="," close=")">
+				#{gid}
+			</foreach>
+		</where>
+	</select>
+	<!--根据游戏名模糊查询  -->
+	<select id="search" resultType="Game" resultMap="rm1">
+		select * from game where gname like '%${gname}%' or gamespace like '%${gname}%' or saler like '%${gname}%' 
+	</select>
+	<!--根据游戏名模糊查询  -->
+	<select id="searchBykid" resultType="Game" resultMap="rm1">
+		select * from game where (gname like '%${gname}%' or gamespace like '%${gname}%' or saler like '%${gname}%') and kid = #{kid}
+	</select>
+	
+	<!-- 分页查询所有游戏列表 -->
+	<select id="findprt" resultType="Game" resultMap="rm1">
+		select * from game limit  #{nid},9
+	</select>
+	
+</mapper>

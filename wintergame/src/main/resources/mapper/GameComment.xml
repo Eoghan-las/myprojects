@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.dao.GameCommentDao">
+	<resultMap type="GameComment" id="rm1">
+		<result column="gid" property="gid"/>
+		<result column="uid" property="uid"/>
+		<association property="game" select="com.im.dao.GameDao.findById" column="gid"></association>
+		<association property="user" select="com.im.dao.UserDao.findById" column="uid"></association>
+	</resultMap>
+	<!-- 根据id查询评论对象 -->
+	<select id="findByid" resultType="GameComment" resultMap="rm1">
+		select * from gamecomment where id = #{id}
+	</select>
+	<!-- 根据游戏id查询 -->
+	<select id="findByGid" resultType="GameComment" resultMap="rm1">
+		select * from gamecomment where gid = #{gid}
+	</select>
+	<!-- 根据用户id查询 -->
+	<select id="findByUid" resultType="GameComment" resultMap="rm1">
+		select * from gamecomment where uid = #{uid}
+	</select>
+	<!-- 删除游戏评论  -->
+	<delete id="delete">
+		delete from gamecomment
+		<where>
+			id in
+			<foreach collection="array" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+	<!-- 添加新评论 -->
+	<insert id="add" parameterType="GameComment">
+		insert into gamecomment(gid,uid,gorb,content,inputdate) values(#{gid},#{uid},#{gorb},#{content},#{inputdate})
+	</insert>
+</mapper>

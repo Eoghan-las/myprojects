@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.dao.UserDao">
+	<!-- 查询所有游戏列表 -->
+	<select id="findAll" resultType="Game">
+		select * from game
+	</select>
+	<!-- 根据游戏类型查询游戏列表 -->
+	<select id="findByKid" resultType="Game">
+		select * from game where kid = #{kid}
+	</select>
+	<!-- 根据游戏id查询游戏对象 -->
+	<select id="findById" resultType="Game">
+		select * from game where gid = #{gid}
+	</select>
+	<!-- 上传新游戏 -->
+	<insert id="addGame" parameterType="Game">
+		insert into game(gname,kid,content,gamespace,saler,gprice,comming,comingtime) values(#{gname},#{kid},#{content},#{gamespace},#{saler},#{gprice},#{comming},#{comingtime})
+	</insert>
+	<!-- 删除游戏 -->
+	<delete id="delete">
+		delete from game
+		<where>
+			gid in
+			<foreach collection="array" item="gid" open="(" separator="," close=")">
+				#{gid}
+			</foreach>
+		</where>
+	</delete>
+	<!-- 修改游戏信息 -->
+	<update id="update">
+		update game
+		<trim suffix=" " suffixOverrides=",">
+			<set>
+				<if test="gname!=null">
+					gname = #{gname},
+				</if>
+				<if test="kid!=0">
+					kid = #{kid},
+				</if>
+				<if test="content!=null">
+					content = #{content},
+				</if>
+				<if test="gamespace!=null">
+					gamespace = #{gamespace},
+				</if>
+				<if test="saler!=null">
+					saler = #{saler},
+				</if>
+				<if test="gprice!=0">
+					gprice = #{gprice},
+				</if>
+				<if test="comming!=0">
+					comming = #{comming},
+				</if>
+				<if test="videos!=null">
+					videos = #{videos}
+				</if>
+			</set>
+		</trim>
+		<where>
+			gid = #{gid}
+		</where>
+	</update>
+	<!-- 根据游戏id数组查询游戏列表 -->
+	<select id="finByIds">
+		select * from game
+		<where>
+			gid in 
+			<foreach collection="array" item="gid" open="(" separator="," close=")">
+				#{gid}
+			</foreach>
+		</where>
+	</select>
+</mapper>

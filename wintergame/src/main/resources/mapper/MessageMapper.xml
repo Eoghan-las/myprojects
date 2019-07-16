@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.dao.MessageDao">
+	<!--查all -->
+	<select id="findAll" resultType="Message" resultMap="rm1,rm2">
+		select * from message order by messagetime desc
+	</select>
+	<!-- zid查 -->
+	<select id="findById" resultType="Message" resultMap="rm1">
+		select * from
+		message where zid=#{zid}
+	</select>
+	<!-- uid查 -->
+	<select id="findByUid" resultType="Message" resultMap="rm1">
+		select * from
+		message where uid=#{uid}
+	</select>
+	<!-- 增 -->
+	<insert id="insert" parameterType="Message">
+		insert into Message
+		(uid,games,messagetime,zcontent,ztitle) values
+		(#{uid},#{games},#{messagetime},#{zcontent},#{ztitle})
+	</insert>
+	<!-- 数组zids 删 -->
+	<delete id="delete" >
+		delete from message
+		<where>
+			zid in
+			<foreach collection="array" item="zid" open="(" separator=","
+				close=")">
+				#{zid}
+			</foreach>
+		</where>
+	</delete>
+	<!-- 咨询编号zid删 -->
+	<delete id="deleteByZid" >
+		delete from message where zid=#{zid}
+	</delete>
+	<!-- 改 -->
+	<update id="update" parameterType="Message">
+		update Message
+		<set>
+			
+			<if test="games!=null">
+				games=#{games},
+			</if>
+			<if test="messagetime!=null">
+				messagetime=#{messagetime},
+			</if>
+			<if test="zcontent!=null">
+				zcontent=#{zcontent},
+			</if>
+			<if test="ztitle!=null">
+				ztitle=#{ztitle}
+			</if>
+		</set>
+		<where>
+			zid=#{zid}
+		</where>
+	</update>
+	<!-- 根据标题、内容模糊查询 -->
+	<select id="search" resultType="Message" parameterType="String" resultMap="rm1"   >
+		select *
+		from Message where (zcontent like '%${ztitle}%' or ztitle like
+		'%${ztitle}%') and uid = #{uid}
+	</select>
+	
+	<select id="findByGame" resultType="Message">
+		select * from message where  ztitle like '%${gid}%' or zcontent like '%${gid}%' or games like '%${gid}%'
+	</select>
+	
+	<!-- 联合查询 -->
+	<resultMap type="Message" id="rm1">
+		<result column="uid" property="uid"/>
+		
+		<association property="user" column="uid" select="com.im.dao.UserDao.findById"></association>
+	</resultMap>
+	<resultMap type="Message" id="rm2">
+		<result column="gid" property="gid"/>
+		
+		<association property="gname" column="gname" select="com.im.dao.GameDao.findById"></association>
+	</resultMap>
+	
+</mapper>

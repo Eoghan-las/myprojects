@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.dao.GameKindDao">
+	
+	<!-- 查询所有游戏类型 -->
+	<select id="findAll" resultType="Gamekind">
+		select * from gamekind 
+	</select>
+	
+	<!-- 根据类型id查询类型对象 -->
+	<select id="findById" resultType="Gamekind">
+		select * from gamekind where kid = #{kid}
+	</select>
+	
+	
+	<!-- 添加游戏类型 -->
+	<insert id="add" >
+		INSERT INTO gamekind(kname) VALUES (#{kname})
+	</insert>
+	
+	
+	<!-- 删除类型 -->
+	<delete id="delete" >
+		delete from gamekind
+		<where>
+			kid in
+			<foreach collection="array" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+	
+	
+</mapper>

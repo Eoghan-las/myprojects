@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.im.dao.CommentDao">
+	<resultMap type="Comment" id="rm1">
+		<result column="zid" property="zid"/>
+		<result column="uid" property="uid"/>
+		<association property="user" select="com.im.dao.UserDao.findById" column="uid"></association>
+		<association property="message" select="com.im.dao.MessageDao.findById" column="zid"></association>
+	</resultMap>
+	<!-- 添加资讯评论 -->
+	<insert id="add" parameterType="Comment">
+		insert into comment(zid,uid,content,inputdate)values
+		(#{zid},#{uid},#{content},#{inputdate})
+	</insert>
+
+	<!-- 删除资讯评论 -->
+	<delete id="delete">
+		delete from Comment
+		<where>
+			id in
+			<foreach collection="array" item="id" open="(" separator=","
+				close=")">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+	<!-- 根据用户id查询所有资讯 -->
+	<select id="findByUid" resultType="Comment" resultMap="rm1">
+		select * from Comment where uid=#{uid}
+	</select>
+
+	<!-- 根据资讯id查询资讯对象 -->
+	<select id="findByZid" resultType="Comment" resultMap="rm1">
+		select * from Comment where zid=#{zid}
+	</select>
+
+</mapper>
